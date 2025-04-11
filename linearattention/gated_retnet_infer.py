@@ -5,10 +5,6 @@ from linearattention.kernel.gate_recurrent_infer import chunk_gate_retention
 from linearattention.rms_norm import RMSNorm
 from linearattention.kernel.swiglu import swiglu
 
-# from kernel.lingche3 import chunk_gate_retention
-# from rms_norm import RMSNorm
-# from kernel.swiglu import swiglu
-
 class GateRetention(nn.Module):
     def __init__(
             self,
