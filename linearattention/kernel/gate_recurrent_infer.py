@@ -199,20 +199,14 @@ class ChunkGateRecurrent(torch.autograd.Function):
 
 
 def cross_chunk(q, k, v, g, last_hidden_state=None):
-    #kv = k.transpose(-1, -2) @ (v * (-g + g[:, :, :, -1, None]).exp()[..., None].to(v.dtype))
-    # Remove the intra-chunk init decay.
+
     kv = k.transpose(-1, -2) @ v
-    #cross_decay = g[:, :, :, -1].exp().to(kv.dtype)
     cross_decay = g.mean(dim=-1).exp().to(kv.dtype)
     S, last_hidden_state_out = chunk_gate_recurrent(kv, cross_decay, last_hidden_state)
     g_cumsum = g.float().cumsum(-1)
     cross = (q * g_cumsum[..., None].exp()) @ S
     
-    # contains_nan = torch.isinf(cross).any()
-    # #contains_nan = torch.isnan(o).any()
-    # if contains_nan :
-    #     import pdb
-    #     pdb.set_trace()
+
     return cross, last_hidden_state_out
 
 @torch.compile
